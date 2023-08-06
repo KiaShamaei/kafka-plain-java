@@ -7,7 +7,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 
-public class ProducerMultiple {
+public class ProducerMultipleDifferentKey {
     public static void main(String[] args) {
         //define static data
         String kafkaUrl = "127.0.0.1:9092";
@@ -22,12 +22,17 @@ public class ProducerMultiple {
         //create producer
         KafkaProducer<String,String> producer = new KafkaProducer<>(properties);
         for(int i = 0 ; i < 10 ; i++ ){
+            // same key
+            String key = "k" + i;
             //create record
-            ProducerRecord<String,String> record = new ProducerRecord<>(topic , "msg no : " + i);
+            ProducerRecord<String,String> record = new ProducerRecord<>(topic ,key ,"msg no : " + i);
 
             //send record via producer and get callBack
             producer.send(record , (m,e)->{
-                String log = "topic : " + m.topic() + " partition : " + m.partition() + " offset : " + m.offset();
+                String log = "topic : " + m.topic()
+                        + " partition : " + m.partition()
+                        + " key : " + key
+                        + " offset : " + m.offset();
                 System.out.println(log);
             });
 
